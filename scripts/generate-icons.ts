@@ -2,8 +2,8 @@
  * Generate YOLO PWA icons as raw PNG (no dependencies — uses only Node/zlib).
  * Run once: bun run scripts/generate-icons.ts
  */
-import { deflateSync } from "zlib";
-import { writeFileSync, mkdirSync } from "fs";
+import { deflateSync, inflateSync } from "zlib";
+import { writeFileSync, readFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
 const OUT = join(import.meta.dir, "..", "public", "icons");
@@ -17,63 +17,57 @@ function distToSegment(px: number, py: number, x1: number, y1: number, x2: numbe
   return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
 }
 
-// ── Draw Y on a transparent RGBA bitmap ──
-function drawY(size: number): Uint8Array {
-  const W = size, H = size;
-  const buf = new Uint8Array(W * H * 4);
+type Bitmap = { W: number; H: number; buf: Uint8Array };
 
-  // Background #0b0b0b
-  for (let i = 0; i < W * H; i++) { buf[i * 4] = 11; buf[i * 4 + 1] = 11; buf[i * 4 + 2] = 11; buf[i * 4 + 3] = 255; }
+function readPNG(file: string): Bitmap {
+  const input = readFileSync(file);
+  if (input.readUInt32BE(0) !== 0x89504e47) throw new Error(`${file} is not a PNG`);
 
-  const thick = size * 0.055;
-  const arms: [number, number, number, number][] = [
-    [W * 0.28, H * 0.20, W * 0.5, H * 0.60],
-    [W * 0.72, H * 0.20, W * 0.5, H * 0.60],
-    [W * 0.50, H * 0.60, W * 0.50, H * 0.88],
-  ];
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  const idat: Buffer[] = [];
+  while (offset < input.length) {
+    const length = input.readUInt32BE(offset);
+    const type = input.toString("ascii", offset + 4, offset + 8);
+    const data = input.subarray(offset + 8, offset + 8 + length);
+    if (type === "IHDR") {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      if (data[8] !== 8 || data[9] !== 6) throw new Error(`${file} must be an 8-bit RGBA PNG`);
+    } else if (type === "IDAT") {
+      idat.push(data);
+    }
+    offset += 12 + length;
+  }
 
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      let inside = false;
-      for (const [ax, ay, bx, by] of arms) {
-        if (distToSegment(x, y, ax, ay, bx, by) <= thick) { inside = true; break; }
+  const rowBytes = width * 4;
+  const inflated = inflateSync(Buffer.concat(idat));
+  const pixels = new Uint8Array(width * height * 4);
+  let sourceOffset = 0;
+  for (let y = 0; y < height; y++) {
+    const filter = inflated[sourceOffset++];
+    const rowOffset = y * rowBytes;
+    for (let x = 0; x < rowBytes; x++) {
+      const left = x >= 4 ? pixels[rowOffset + x - 4] : 0;
+      const above = y > 0 ? pixels[rowOffset - rowBytes + x] : 0;
+      const upperLeft = y > 0 && x >= 4 ? pixels[rowOffset - rowBytes + x - 4] : 0;
+      const value = inflated[sourceOffset++];
+      let reconstructed = value;
+      if (filter === 1) reconstructed = value + left;
+      if (filter === 2) reconstructed = value + above;
+      if (filter === 3) reconstructed = value + Math.floor((left + above) / 2);
+      if (filter === 4) {
+        const estimate = left + above - upperLeft;
+        const pa = Math.abs(estimate - left);
+        const pb = Math.abs(estimate - above);
+        const pc = Math.abs(estimate - upperLeft);
+        reconstructed = value + (pa <= pb && pa <= pc ? left : pb <= pc ? above : upperLeft);
       }
-      if (inside) {
-        const idx = (y * W + x) * 4;
-        buf[idx] = 255; buf[idx + 1] = 255; buf[idx + 2] = 255; buf[idx + 3] = 255;
-      }
+      pixels[rowOffset + x] = reconstructed & 0xff;
     }
   }
-  return buf;
-}
-
-// ── Maskable: white circle + inverted Y ──
-function drawMaskable(size: number): Uint8Array {
-  const W = size, H = size;
-  const buf = new Uint8Array(W * H * 4);
-  for (let i = 0; i < W * H; i++) { buf[i * 4] = 11; buf[i * 4 + 1] = 11; buf[i * 4 + 2] = 11; buf[i * 4 + 3] = 255; }
-
-  // White circle (60% radius centered)
-  const cx = W / 2, cy = H / 2, r = W * 0.38;
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    if (Math.hypot(x - cx, y - cy) <= r) {
-      const i = (y * W + x) * 4; buf[i] = 255; buf[i + 1] = 255; buf[i + 2] = 255; buf[i + 3] = 255;
-    }
-  }
-
-  // Dark Y inside
-  const thick = size * 0.048;
-  const arms: [number, number, number, number][] = [
-    [W * 0.34, H * 0.30, W * 0.5, H * 0.60],
-    [W * 0.66, H * 0.30, W * 0.5, H * 0.60],
-    [W * 0.50, H * 0.60, W * 0.50, H * 0.80],
-  ];
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    let inside = false;
-    for (const [ax, ay, bx, by] of arms) { if (distToSegment(x, y, ax, ay, bx, by) <= thick) { inside = true; break; } }
-    if (inside) { const i = (y * W + x) * 4; buf[i] = 11; buf[i + 1] = 11; buf[i + 2] = 11; buf[i + 3] = 255; }
-  }
-  return buf;
+  return { W: width, H: height, buf: pixels };
 }
 
 // ── Nearest-neighbour downscale ──
@@ -146,15 +140,43 @@ function encodePNG(width: number, height: number, rgba: Uint8Array): Buffer {
   return out;
 }
 
-// ── Generate ──
-const src = { W: 512, H: 512, buf: drawY(512) };
-const mask = { W: 512, H: 512, buf: drawMaskable(512) };
+function composeIcon(source: Bitmap, size: number, background: [number, number, number]): Uint8Array {
+  const output = new Uint8Array(size * size * 4);
+  output.fill(255);
+  for (let i = 0; i < size * size; i++) {
+    output[i * 4] = background[0];
+    output[i * 4 + 1] = background[1];
+    output[i * 4 + 2] = background[2];
+  }
+  const scaleFactor = Math.min((size * 0.82) / source.W, (size * 0.82) / source.H);
+  const targetW = Math.max(1, Math.round(source.W * scaleFactor));
+  const targetH = Math.max(1, Math.round(source.H * scaleFactor));
+  const startX = Math.floor((size - targetW) / 2);
+  const startY = Math.floor((size - targetH) / 2);
+  const resized = scale(source, targetW, targetH);
+  for (let y = 0; y < targetH; y++) for (let x = 0; x < targetW; x++) {
+    const sourceIndex = (y * targetW + x) * 4;
+    const targetIndex = ((startY + y) * size + startX + x) * 4;
+    const alpha = resized[sourceIndex + 3] / 255;
+    output[targetIndex] = Math.round(resized[sourceIndex] * alpha + background[0] * (1 - alpha));
+    output[targetIndex + 1] = Math.round(resized[sourceIndex + 1] * alpha + background[1] * (1 - alpha));
+    output[targetIndex + 2] = Math.round(resized[sourceIndex + 2] * alpha + background[2] * (1 - alpha));
+  }
+  return output;
+}
 
-writeFileSync(join(OUT, "icon-192.png"), encodePNG(192, 192, scale(src, 192, 192)));
-writeFileSync(join(OUT, "icon-512.png"), encodePNG(512, 512, scale(src, 512, 512)));
-writeFileSync(join(OUT, "icon-512-maskable.png"), encodePNG(512, 512, mask.buf));
+const publicDir = join(import.meta.dir, "..", "public");
+const logos = [
+  { name: "logo-dark", source: readPNG(join(publicDir, "logo-dark.png")), background: [255, 255, 255] as [number, number, number] },
+  { name: "logo-white", source: readPNG(join(publicDir, "logo-white.png")), background: [11, 11, 11] as [number, number, number] },
+];
+for (const logo of logos) {
+  for (const size of [32, 192, 512]) {
+    writeFileSync(join(OUT, `${logo.name}-${size}.png`), encodePNG(size, size, composeIcon(logo.source, size, logo.background)));
+  }
+}
 
-console.log("✓ public/icons/icon-192.png, icon-512.png, icon-512-maskable.png");
+console.log("✓ Generated logo-dark/logo-white favicon and 192px/512px icon variants");
 
 // ── OG social card 1200×630 ──
 const OG_W = 1200, OG_H = 630;

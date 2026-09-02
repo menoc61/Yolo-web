@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Comment se passe le retour ou l'échange ?",
-    a: "Tu disposes de 7 jours après réception pour échanger un produit dans son état d'origine (étiquettes intactes). Écris-nous sur WhatsApp au +237 699 00 00 00 pour lancer un échange.",
+    a: "Tu disposes de 7 jours après réception pour échanger un produit dans son état d'origine (étiquettes intactes). Écris-nous sur WhatsApp au +7 901 180 53 50 pour lancer un échange.",
   },
   {
     q: "Les produits sont-ils garantis ?",
@@ -186,7 +186,7 @@ export default function AboutPage() {
           </div>
           <p style={{ fontSize: "0.75rem", color: "#666", marginTop: 24 }}>
             Une autre question ? <Link href="/contact" style={{ color: "#fff", textDecoration: "none" }}>Contacte-nous</Link> ou écris au{" "}
-            <a href="https://wa.me/237699000000" style={{ color: "#25D366", textDecoration: "none" }}>WhatsApp +237 699 00 00 00</a>
+            <a href="https://wa.me/+79011805350" style={{ color: "#25D366", textDecoration: "none" }}>WhatsApp +7 901 180 53 50</a>
           </p>
         </div>
       </div>

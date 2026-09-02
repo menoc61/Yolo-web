@@ -394,13 +394,13 @@ export function ProfileClient() {
                     <span style={{ fontSize: "0.58rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "3px 8px", borderRadius: 4, background: "#1a1a1a", color: "#aaa", fontWeight: 700 }}>{user.role}</span>
                   </div>
                   <AnimatedInput label="Nom" id="prof-name" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} placeholder="Ton nom" />
-                  <AnimatedInput label="Téléphone" id="prof-phone" value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+237 699 00 00 00" />
+                  <AnimatedInput label="Téléphone" id="prof-phone" value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} placeholder="+7 901 180 53 50" />
                   <motion.button onClick={() => { updateProfile(profileForm.name, profileForm.phone); toast.success("Profil mis à jour — Avenue Kennedy"); }} className="btn-primary" whileTap={{ scale: 0.97 }}>
                     Sauvegarder
                   </motion.button>
                   <div style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
                     <motion.button onClick={clearHistory} style={{ background: "none", border: "1px solid #222", color: "#666", padding: "8px 14px", fontSize: "0.65rem", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.1em", textTransform: "uppercase" }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>Effacer historique</motion.button>
-                    <a href="https://wa.me/237699000000" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "8px 14px", fontSize: "0.65rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.1em", textTransform: "uppercase" }}>WhatsApp Support</a>
+                    <a href="https://wa.me/+79011805350" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "8px 14px", fontSize: "0.65rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.1em", textTransform: "uppercase" }}>WhatsApp Support</a>
                   </div>
                   <p style={{ fontSize: "0.6rem", color: "#444" }}>Export factures FCFA · Retours 7j · Avenue Kennedy · yolo.co</p>
                 </div>

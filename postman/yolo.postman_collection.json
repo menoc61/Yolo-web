@@ -76,7 +76,7 @@
     {
       "name": "Partner",
       "item": [
-        { "name": "Apply as Partner", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}" }], "url": "{{baseUrl}}/api/partner/apply", "body": { "mode": "raw", "raw": "{\n  \"businessName\": \"Tech Store Yaoundé\",\n  \"contactName\": \"Jean Dupont\",\n  \"phone\": \"+237699000000\",\n  \"city\": \"Yaoundé\",\n  \"businessType\": \"Electronics\",\n  \"message\": \"We sell premium electronics.\"\n}" } } }
+        { "name": "Apply as Partner", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}" }], "url": "{{baseUrl}}/api/partner/apply", "body": { "mode": "raw", "raw": "{\n  \"businessName\": \"Tech Store Yaoundé\",\n  \"contactName\": \"Jean Dupont\",\n  \"phone\": \"++79011805350\",\n  \"city\": \"Yaoundé\",\n  \"businessType\": \"Electronics\",\n  \"message\": \"We sell premium electronics.\"\n}" } } }
       ]
     }
   ]

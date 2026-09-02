@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
-import rawProducts from "@/data/products.json";
+import { MOCK_PRODUCTS } from "@/lib/products";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://yolo.co";
+  const base = "https://yolo-cm.vercel.app";
   const now = new Date();
-  const products = (rawProducts as any[]).map((p) => ({
+  const products = MOCK_PRODUCTS.map((p) => ({
     url: `${base}/products/${p.slug}`,
     lastModified: p.updatedAt ? new Date(p.updatedAt) : now,
     changeFrequency: "weekly" as const,

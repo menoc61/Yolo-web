@@ -101,7 +101,7 @@ export function ShopMapSection({ productSlug, productName }: Props) {
               <div style={{ fontSize: "0.7rem", color: s.type === "flagship" ? "#0b0b0b" : "#25D366", marginTop: 6 }}>{s.phone} → Itinéraire</div>
             </motion.a>
           ))}
-          <a href="https://wa.me/237699000000" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "12px 16px", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", textAlign: "center" }}>WhatsApp Avenue Kennedy →</a>
+          <a href="https://wa.me/+79011805350" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "12px 16px", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", textAlign: "center" }}>WhatsApp Avenue Kennedy →</a>
         </div>
       </div>
 

@@ -5,6 +5,7 @@ export type PaymentMethod = "visa" | "om" | "momo" | "cash";
 export type CashMode = "shop" | "cod";
 export type OrderStatus = "paid" | "pending_push" | "cod_pending" | "rejected";
 
+// cspell:ignore débité FCFA USSD confirmer téléphone momo MoMo Cinet CinetPay retrait espèces
 export const PAYMENT_META: Record<PaymentMethod, { label: string; desc: string; provider?: string; icon: string }> = {
   visa: { label: "Visa", desc: "Stripe 3D Secure — débité en FCFA (XAF)", provider: "Stripe", icon: "💳" },
   om: { label: "Orange Money", desc: "Notch — push USSD à confirmer sur ton téléphone", provider: "Notch", icon: "📱" },

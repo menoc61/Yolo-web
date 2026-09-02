@@ -191,7 +191,7 @@ export function CartDrawer() {
               <motion.button className="btn-secondary" onClick={handleClose} style={{ width: "100%", fontSize: "0.7rem" }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
                 Continuer vos achats
               </motion.button>
-              <a href="https://wa.me/237699000000?text=Bonjour%20YOLO%20Avenue%20Kennedy" target="_blank" style={{ fontSize: "0.65rem", textAlign: "center", color: "#25D366", textDecoration: "none", letterSpacing: "0.08em", marginTop: 4 }}>Commander via WhatsApp →</a>
+              <a href="https://wa.me/+79011805350?text=Bonjour%20YOLO%20Avenue%20Kennedy" target="_blank" style={{ fontSize: "0.65rem", textAlign: "center", color: "#25D366", textDecoration: "none", letterSpacing: "0.08em", marginTop: 4 }}>Commander via WhatsApp →</a>
             </div>
           </div>
           );

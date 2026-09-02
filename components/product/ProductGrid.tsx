@@ -9,7 +9,7 @@ import { useWishlistStore } from "@/stores/wishlist";
 import type { Product } from "@/lib/types";
 import type { RefObject, ForwardedRef } from "react";
 import { AnimatedCarousel } from "@/components/ui/AnimatedCarousel";
-import { formatPrice, formatFCFA } from "@/lib/currency";
+import { formatPrice } from "@/lib/currency";
 import { RatingInline } from "./ProductRating";
 
 interface Props {
@@ -17,42 +17,39 @@ interface Props {
   imageRef?: RefObject<HTMLImageElement> | ForwardedRef<HTMLImageElement>;
 }
 
-export function ProductCard({ product, imageRef }: Props) {
+export function ProductCard({ product }: Props) {
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
   const prefersReduce = useReducedMotion();
   const [mounted, setMounted] = useState(false);
-  const shouldReduce = mounted ? prefersReduce : null;
+  const shouldReduce = mounted ? prefersReduce : false;
+  const storedIsInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
+  const isInWishlist = mounted ? storedIsInWishlist : false;
 
   useEffect(() => {
     setMounted(true);
   }, []);
-  const isInWishlist = useWishlistStore((s) => s.isInWishlist(product.id));
-  const toggleItem = useWishlistStore((s) => s.toggleItem);
-  const count = useWishlistStore((s) => s.count());
-  const [heartAnimating, setHeartAnimating] = useState(false);
 
   const handleToggleWishlist = () => {
     if (shouldReduce) return;
-    toggleItem(product.id);
-    setHeartAnimating(true);
-    const heartSvg = document.querySelector(
-      `.wishlist-heart svg`
-    ) as SVGSVGElement | null;
+    useWishlistStore.getState().toggleItem(product.id);
+    const heartSvg = document.querySelector(`.wishlist-heart svg`) as SVGSVGElement | null;
     if (heartSvg) {
       gsap.fromTo(
         heartSvg,
         { scale: 1 },
-        { scale: 1.3, duration: 0.3, ease: "back.out(1.7)", onComplete: () => {
-          gsap.to(heartSvg, { scale: 1, duration: 0.3, ease: "back.out(1.7)" });
-        }}
+        {
+          scale: 1.3,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+          onComplete: () => gsap.to(heartSvg, { scale: 1, duration: 0.3, ease: "back.out(1.7)" }),
+        },
       );
     }
-    setTimeout(() => setHeartAnimating(false), 600);
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleAddToCart = (event: React.MouseEvent) => {
+    event.preventDefault();
     addItem({
       id: product.id,
       name: product.name,
@@ -64,13 +61,7 @@ export function ProductCard({ product, imageRef }: Props) {
   };
 
   return (
-    <motion.article
-      className="product-card"
-      initial={shouldReduce ? { opacity: 0 } : { opacity: 0, transform: "translateY(18px)" }}
-      animate={{ opacity: 1, transform: "translateY(0px)" }}
-      transition={shouldReduce ? { duration: 0.01 } : { duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-      whileHover={shouldReduce ? undefined : { transform: "translateY(-4px)" }}
-    >
+    <article className="product-card">
       <Link href={`/products/${product.slug}`} aria-label={`${product.name} — ${product.category}`}>
         <div className="product-card__image-wrap group">
           {product.discountPercent && (
@@ -99,6 +90,7 @@ export function ProductCard({ product, imageRef }: Props) {
           </div>
         </div>
       </Link>
+
       <motion.button
         className="wishlist-heart"
         aria-label={isInWishlist ? "Retirer des favoris" : "Ajouter aux favoris"}
@@ -123,24 +115,13 @@ export function ProductCard({ product, imageRef }: Props) {
           placeItems: "center",
         }}
       >
-        <svg
-          width={20}
-          height={20}
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          style={{ width: "100%", height: "100%" }}
-        >
+        <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor" style={{ width: "100%", height: "100%" }}>
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.42 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.5 11.5zM12 4l-1.63-1.49C10.5 1.86 8.35 1.56 6 1.56 2.47 1.56 0.5 3.42 0 5.25c1.74 1.31 3.56 2.09 5.46 2.09 1.86 0 3.68-.77 5.17-1.53l1.45 1.32C13.5 5.74 12 7.08 12 8.5z" />
         </svg>
       </motion.button>
 
       <div className="product-card__overlay">
-        <motion.button
-          className="btn-primary"
-          onClick={handleAddToCart}
-          whileTap={{ scale: 0.96 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        >
+        <motion.button className="btn-primary" onClick={handleAddToCart} whileTap={{ scale: 0.96 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
           Add to Cart
         </motion.button>
         <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
@@ -151,22 +132,13 @@ export function ProductCard({ product, imageRef }: Props) {
       </div>
 
       <div className="product-card__actions">
-        <motion.button
-          className="product-card__actions-add"
-          onClick={handleAddToCart}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-        >
+        <motion.button className="product-card__actions-add" onClick={handleAddToCart} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
           Ajouter au panier
         </motion.button>
-        <Link
-          href={`/products/${product.slug}`}
-          className="product-card__actions-view"
-          aria-label={`Voir ${product.name}`}
-        >
+        <Link href={`/products/${product.slug}`} className="product-card__actions-view" aria-label={`Voir ${product.name}`}>
           Voir
         </Link>
       </div>
-    </motion.article>
+    </article>
   );
 }

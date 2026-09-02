@@ -88,7 +88,7 @@ export function CheckoutClient() {
     const e: Record<string, string> = {};
     if (touched.name && !form.name.trim()) e.name = "Nom requis";
     if (touched.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "E-mail invalide";
-    if (touched.phone && !/^\+?237[0-9]{8,9}$/.test(form.phone.replace(/\s/g, ""))) e.phone = "Ex: +237699000000";
+    if (touched.phone && !/^\+?237[0-9]{8,9}$/.test(form.phone.replace(/\s/g, ""))) e.phone = "Ex: ++79011805350";
     if (touched.street && !fullAddress) e.street = "Adresse requise";
     return e;
   }, [form, touched, fullAddress]);
@@ -185,7 +185,7 @@ export function CheckoutClient() {
                 <div>
                   <div style={{ fontSize: "1.05rem", fontWeight: 800, letterSpacing: "0.08em" }}>YOLO</div>
                   <div style={{ fontSize: "0.62rem", color: "#666", letterSpacing: "0.06em", marginTop: 2 }}>Avenue Kennedy, Yaoundé · yolo.co</div>
-                  <div style={{ fontSize: "0.62rem", color: "#555" }}>WhatsApp +237 699 00 00 00</div>
+                  <div style={{ fontSize: "0.62rem", color: "#555" }}>WhatsApp +7 901 180 53 50</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: "0.6rem", color: "#666", letterSpacing: "0.22em", textTransform: "uppercase" }}>Reçu · {order.orderId}</div>
@@ -253,7 +253,7 @@ export function CheckoutClient() {
 
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24, flexWrap: "wrap" }}>
             <Link href="/products" className="btn-primary">Continuer shopping</Link>
-            <a href="https://wa.me/237699000000" target="_blank" rel="noopener" className="btn-secondary">WhatsApp YOLO</a>
+            <a href="https://wa.me/+79011805350" target="_blank" rel="noopener" className="btn-secondary">WhatsApp YOLO</a>
           </div>
         </div>
       </div>
@@ -317,7 +317,7 @@ export function CheckoutClient() {
                       <div style={{ display: "grid", gap: 14 }}>
                         <AnimatedInput label="Nom complet" id="c-name" value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} onBlur={() => setTouched((s) => ({ ...s, name: true }))} error={errors.name} placeholder="Jean Dupont" />
                         <AnimatedInput label="E-mail" id="c-email" type="email" value={form.email} onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))} onBlur={() => setTouched((s) => ({ ...s, email: true }))} error={errors.email} placeholder="ton@email.com" />
-                        <AnimatedInput label="Téléphone WhatsApp" id="c-phone" type="tel" value={form.phone} onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))} onBlur={() => setTouched((s) => ({ ...s, phone: true }))} error={errors.phone} placeholder="+237 699 00 00 00" />
+                        <AnimatedInput label="Téléphone WhatsApp" id="c-phone" type="tel" value={form.phone} onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))} onBlur={() => setTouched((s) => ({ ...s, phone: true }))} error={errors.phone} placeholder="+7 901 180 53 50" />
                       </div>
                     </section>
 
@@ -490,7 +490,7 @@ export function CheckoutClient() {
                 )}
               </motion.button>
               <p style={{ fontSize: "0.6rem", color: "#444", textAlign: "center", marginTop: 10, lineHeight: 1.5 }}>
-                Avenue Kennedy, Yaoundé · <a href="https://wa.me/237699000000" style={{ color: "#25D366" }}>WhatsApp aide</a> · yolo.co
+                Avenue Kennedy, Yaoundé · <a href="https://wa.me/+79011805350" style={{ color: "#25D366" }}>WhatsApp aide</a> · yolo.co
               </p>
             </motion.div>
           </div>

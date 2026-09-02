@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import gsap from "gsap";
 import { motion } from "motion/react";
 import { useCartStore } from "@/stores/cart";
 import { useAuthStore } from "@/stores/auth";
 import { useI18n } from "@/context/I18nContext";
+import { CONTACT_PHONE, CONTACT_PHONE_TEL, CONTACT_WHATSAPP } from "@/lib/site";
+
+// Never-changing subscription used by the hydration guard below.
+const subscribe = () => () => {};
 
 const NAV_LINKS = [
   { href: "/products", labelKey: "nav.products" as const },
@@ -24,7 +28,9 @@ export function SiteHeader() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  // Hydration guard: false during SSR/hydration, true once mounted on the
+  // client. Avoids setState-in-effect cascade for the client-only cart badge.
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
 
   const openNav = () => {
     if (!overlayRef.current) return;
@@ -69,8 +75,6 @@ export function SiteHeader() {
     if (overlayRef.current)
       gsap.set(overlayRef.current, { display: "none", y: "-100%" });
   }, []);
-
-  useEffect(() => setMounted(true), []);
 
   return (
     <>
@@ -234,11 +238,11 @@ export function SiteHeader() {
             <a href="mailto:hello@yolo.co" className="nav-contact__item">
               hello@yolo.co
             </a>
-            <a href="tel:+237699000000" className="nav-contact__item">
-              +237 699 00 00 00
+            <a href={`tel:${CONTACT_PHONE_TEL}`} className="nav-contact__item">
+              {CONTACT_PHONE}
             </a>
             <a
-              href="https://wa.me/237699000000"
+              href={CONTACT_WHATSAPP}
               target="_blank"
               rel="noopener"
               className="nav-contact__item"

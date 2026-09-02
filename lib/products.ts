@@ -1,8 +1,10 @@
 import type { Product } from "./types";
 import rawProducts from "@/data/products.json";
 
-// Re-export as typed array from external data folder
-export const MOCK_PRODUCTS: Product[] = rawProducts as Product[];
+// Keep the storefront catalog electronics-only even if legacy records remain in the source file.
+export const MOCK_PRODUCTS: Product[] = (rawProducts as Product[]).filter(
+  (product) => product.category === "Electronics"
+);
 
 export async function getProducts(): Promise<Product[]> {
   await new Promise((r) => setTimeout(r, 200));

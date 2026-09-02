@@ -67,7 +67,7 @@ Hardcode hexes. No color tokens system beyond the values above.
 ## 6. Commerce Rules
 
 - **Currency:** FCFA only — `formatPrice`/`formatFCFA` from `lib/currency.ts` (USD × 620). Never `$` or CHF.
-- **Brand facts:** Avenue Kennedy, Yaoundé, Cameroun · `+237 699 00 00 00` · `hello@yolo.co` · `yolo.co`. No "Fribourg".
+- **Brand facts:** Avenue Kennedy, Yaoundé, Cameroun · `+7 901 180 53 50` · `hello@yolo.co` · `yolo.co`. No "Fribourg".
 - **Payments:** Visa (Stripe mock), Orange Money, MTN MoMo, Cash on Delivery.
 - **Checkout gate:** auth required; unauthenticated click opens the auth modal via `yolo:open-auth`.
 - **Promo:** `lib/promo.ts` `applyPromo(totalFCFA, code)`.

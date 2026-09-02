@@ -1,5 +1,5 @@
 /* YOLO PWA Service Worker — local-first · offline fallback */
-const CACHE = "yolo-pwa-v2";
+const CACHE = "yolo-pwa-v3";
 const OFFLINE_URL = "/offline.html";
 
 // Static app shell to precache
@@ -48,17 +48,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Same-origin static assets (JS/CSS/images/fonts) → stale-while-revalidate
+  // Next.js bundles must be fresh after every deployment; use cache only offline.
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.open(CACHE).then((cache) =>
-        cache.match(request).then((cached) => {
-          const fetched = fetch(request).then((response) => {
-            if (response.ok) cache.put(request, response.clone());
-            return response;
-          }).catch(() => cached);
-          return cached || fetched;
-        })
+        fetch(request).then((response) => {
+          if (response.ok && !url.pathname.startsWith("/_next/")) cache.put(request, response.clone());
+          return response;
+        }).catch(() => cache.match(request))
       )
     );
     return;

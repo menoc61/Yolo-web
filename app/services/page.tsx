@@ -139,11 +139,11 @@ export default function ServicesPage() {
             web pour commander en 1 clic.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="https://yolo.co" className="btn-primary" style={{ textDecoration: "none" }}>
+            <a href="https://yolo-cm.vercel.app" className="btn-primary" style={{ textDecoration: "none" }}>
               Visiter yolo.co →
             </a>
             <a
-              href="https://wa.me/237699000000?text=Bonjour%20YOLO%20—%20je%20veux%20télécharger%20l%27app"
+              href="https://wa.me/+79011805350?text=Bonjour%20YOLO%20—%20je%20veux%20télécharger%20l%27app"
               target="_blank"
               className="btn-secondary"
               style={{ textDecoration: "none", color: "#25D366", borderColor: "#25D366" }}

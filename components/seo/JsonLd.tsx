@@ -1,12 +1,14 @@
+import { CONTACT_PHONE_TEL, CONTACT_WHATSAPP, SITE_URL } from "@/lib/site";
+
 export function OrganizationJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "Store",
     name: "YOLO",
-    url: "https://yolo.co",
-    logo: "https://yolo.co/logo.png",
-    image: "https://yolo.co/og.jpg",
-    description: "YOLO Cameroun — Avenue Kennedy, Yaoundé. Premium electronics, apparel & lifestyle. Prix en FCFA.",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo-dark.png`,
+    image: `${SITE_URL}/og.png`,
+    description: "YOLO Cameroun — Avenue Kennedy, Yaoundé. Premium electronics and smart accessories. Prix en FCFA.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Avenue Kennedy",
@@ -15,13 +17,13 @@ export function OrganizationJsonLd() {
       addressCountry: "CM",
     },
     geo: { "@type": "GeoCoordinates", latitude: 3.8481, longitude: 11.5023 },
-    telephone: "+237699000000",
+    telephone: CONTACT_PHONE_TEL,
     email: "hello@yolo.co",
     priceRange: "FCFA",
     currenciesAccepted: "XAF",
     paymentAccepted: "Visa, Orange Money, MTN MoMo, Cash",
     openingHours: "Mo-Sa 09:00-19:00",
-    sameAs: ["https://wa.me/237699000000"],
+    sameAs: [CONTACT_WHATSAPP],
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }
@@ -34,7 +36,7 @@ export function ProductJsonLd({ product }: { product: { name: string; descriptio
     description: product.description,
     category: product.category,
     image: product.images,
-    url: `https://yolo.co/products/${product.slug}`,
+    url: `https://yolo-cm.vercel.app/products/${product.slug}`,
     brand: { "@type": "Brand", name: "YOLO" },
     offers: {
       "@type": "Offer",
@@ -42,7 +44,7 @@ export function ProductJsonLd({ product }: { product: { name: string; descriptio
       priceCurrency: "XAF",
       availability: "https://schema.org/InStock",
       seller: { "@type": "Organization", name: "YOLO" },
-      url: `https://yolo.co/products/${product.slug}`,
+      url: `https://yolo-cm.vercel.app/products/${product.slug}`,
     },
     aggregateRating: product.rating
       ? { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviewCount ?? 1, bestRating: 5, worstRating: 1 }

@@ -1,104 +1,139 @@
-# YOLO — yolo.co · Avenue Kennedy, Yaoundé
+<div align="center">
+  <img src="public/logo-dark.png" alt="YOLO" width="220" />
+  <p>A focused electronics storefront for Yaounde, Cameroon.</p>
+  <p><a href="https://github.com/menoc61/animatedlayout/actions/workflows/ci.yml"><img src="https://github.com/menoc61/animatedlayout/actions/workflows/ci.yml/badge.svg" alt="Continuous integration" /></a> <a href="https://yolo-cm.vercel.app"><img src="https://img.shields.io/badge/demo-Vercel-black?logo=vercel" alt="Vercel demo" /></a> <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js 16" /></a> <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript" alt="TypeScript strict mode" /></a> <a href="https://bun.sh/"><img src="https://img.shields.io/badge/runtime-Bun-000000?logo=bun" alt="Bun runtime" /></a></p>
+</div>
 
-Enterprise e-commerce for Cameroun — prices in **FCFA**, hosted on **yolo.co**, flagship store **Avenue Kennedy, Yaoundé**. Mobile-first, 60fps, accessible, SEO-perfect. Built for scale.
+## Demo
+
+**[Open the Vercel test deployment](https://yolo-cm.vercel.app)**
+
+This is the current test deployment. Its metadata, Open Graph URLs, JSON-LD, sitemap, and robots file use `yolo-cm.vercel.app`. Update them together when the permanent domain is approved.
+
+## About
+
+YOLO is a mobile-first ecommerce application for electronics and smart accessories in FCFA (XAF). The catalog includes computers, audio devices, wearables, charging products, smart-home devices, and peripherals.
+
+The app includes:
+
+- Product discovery with search, category filters, price filters, sorting, and pagination
+- Product detail pages with ratings, stock state, recommendations, and structured data
+- Persistent cart and wishlist state
+- Visa, Orange Money, MTN MoMo, and cash-on-delivery checkout flows
+- French and English interface content
+- Responsive layout, accessible motion, PWA metadata, offline support, and SEO metadata
+
+## Project Scope
+
+YOLO is a complete storefront ecosystem rather than a catalog page. It includes:
+
+- A responsive public storefront with featured products, search, filters, sorting, pagination, and product recommendations
+- Product detail pages with image carousels, ratings, inventory state, discount display, structured Product JSON-LD, and static route generation
+- Client-side commerce state for cart, wishlist, authentication, orders, and checkout progress, persisted through Zustand where appropriate
+- Checkout support for Visa, Orange Money, MTN MoMo, cash on delivery, FCFA totals, shipping zones, promotions, validation, and WhatsApp fallback
+- French and English content, mobile navigation, keyboard-accessible controls, reduced-motion handling, loading skeletons, and error boundaries
+- PWA support through a manifest, generated dark and white logo icons at favicon, 192px, and 512px sizes, service-worker support, and an offline page
+- Search-friendly metadata through canonical URLs, Open Graph, Twitter cards, robots rules, sitemap generation, organization JSON-LD, and product JSON-LD
+- An electronics-only catalog boundary enforced in the data access layer and checked in CI
 
 ## Stack
 
-| Layer | Tech | Why |
-|-------|------|-----|
-| Framework | Next.js 16 App Router, Turbopack, `use cache` | RSC, streaming, `cacheComponents` ready |
-| UI | React 19, TypeScript strict, `motion` (framer) + GSAP 3 + ScrollTrigger + Lenis | GPU-only `transform`/`opacity`, `@starting-style` fallbacks |
-| State | Zustand `yolo-cart` (persist, versioned) + TanStack Query 5 (dedup, `useCache` server) | Vercel best-practice: parallel fetch, `Promise.all`, no waterfalls |
-| Styling | CSS BEM + Tailwind 4 (`tw-animate-css`), design tokens (`--ease-out`) | Scalable, no CSS-in-JS runtime |
-| Data | `data/products.json` external + `lib/products.ts` / `lib/products.server.ts` | Dummy data isolated, `use cache` server |
-| Payments | Visa, Orange Money, MTN MoMo, Cash on Delivery + promo codes | FCFA throughout |
-| Hosting | yolo.co, `metadataBase` `https://yolo.co`, OG `fr_CM`, `y+` |
+| Area | Technology |
+| --- | --- |
+| Application | Next.js 16 App Router, React 19, TypeScript |
+| Runtime | Bun 1.3.14, Node.js 20+ |
+| Data and state | TanStack Query, Zustand, typed JSON catalog |
+| UI | Tailwind CSS 4, project CSS tokens, Motion, GSAP |
+| Validation | ESLint, catalog validator, Next.js production build |
+| Hosting | Vercel |
 
-## Architecture — scalable, maintainable
-
-```
-web/
-├─ app/                 // RSC pages, generateStaticParams, use cache, page transitions
-│  ├─ (marketing)/page.tsx  // Hero, Featured, GSAP batch reveal
-│  ├─ products/[slug]/  // AnimatedCarousel 4 images, Rating, FCFA
-│  ├─ products/page.tsx // Filters + pagination + AnimatePresence, Skeleton
-│  ├─ contact/page.tsx  // Animated inputs, validation
-│  ├─ checkout/page.tsx // Visa/OM/MoMo/COD + shipping
-│  └─ layout.tsx        // fonts (Josefin), Query+ I18n, SiteHeader, PageTransition, Newsletter, SiteFooter, viewport
-├─ components/
-│  ├─ ui/AnimatedCarousel.tsx // motion, blur placeholder, progress, drag, reduced-motion, avif/webp
-│  ├─ ui/Skeleton.tsx, ui/AnimatedInput.tsx
-│  ├─ cms/PageTransition.tsx, cms/Newsletter.tsx (WhatsApp)
-│  ├─ product/ProductRating.tsx, ProductGrid.tsx
-│  ├─ cart/CartDrawer.tsx  // FCFA, promo, spinner micro-interaction
-│  └─ cms/ContactForm.tsx // micro-interaction validated
-├─ data/products.json   // external dummy data (12 products, 4 images, rating, discount, audit)
-├─ lib/
-│  ├─ types.ts         // Product { rating, reviewCount, discountPercent, createdAt, createdBy, deletedAt, deletedBy, outOfStock, inventory }
-│  ├─ currency.ts      // formatFCFA (fr-CM), formatPrice USD→FCFA 620
-│  ├─ promo.ts         // YOLO10, KENNEDY20, WHATSAPP5
-│  └─ products{,.server}.ts // client + "use cache" server
-├─ hooks/useAnimations.ts // gsap context, ScrollTrigger batch, 60fps
-└─ stores/cart.ts       // persist, itemCount/subtotal
-```
-
-**Principles:**
-- **Mobile-first**: `viewport` `device-width`, `640/1024` breakpoints, `dvh`, touch `44px` targets, hover gated `(@media hover:hover)`, `useReducedMotion` everywhere.
-- **Performance**: `next/image` `fill`+`sizes`+`blurDataURL`+`fetchPriority high` for LCP, `formats avif/webp`, `minimumCacheTTL 30d`, `content-visibility` on grids, `Promise.all` parallel, `React.cache` dedup, `motion` layout springs `500/40`.
-- **SEO**: `metadata` + `viewport` + `openGraph fr_CM` + `canonical yolo.co` + `generateStaticParams` + JSON-LD (Product) planned.
-- **A11y**: `prefers-reduced-motion` fallbacks, `focus-visible:ring`, `aria-*`, keyboard Nav (Esc, arrows).
-- **Maintainability**: One source `data/` , typed `Product`, `formatFCFA` single, `promo` single, `AGENTS.md` rules, `README` as contract.
-
-## Animations — iart-ai/web-animation-skills + micro-interaction + 60fps
-
-All skills installed: `animate`, `gsap-core/scrolltrigger/timeline/react/performance`, `iart-ai` 60fps, micro-interaction, page-transition, accessible, gsap-web.
-
-- **Micro**: buttons `whileTap scale 0.96` spring `400/30`, `whileHover 1.03`, inputs focus `boxShadow 0 0 0 3px`, toast `AnimatePresence mode=popLayout`, `duration 100–250ms`, `ease [0.16,1,0.3,1]` / `var(--ease-out)`.
-- **Page transition**: `PageTransition` GSAP `fromTo opacity 0→1 y 8→0 0.45s power3.out` on `pathname` change, `will-change-transform`.
-- **Carousel**: transform/opacity only, stagger `0.06`, drag `0.14`, progress `scaleX linear`.
-- **Background micro**: `Newsletter` shimmer, `Hero` Lenis smooth, `pulse-dot` 2s.
-
-## Data model — audit + stock
-
-`Product` now:
-```ts
-{ id, slug, name, category, price, originalPrice?, discountPercent?, rating, reviewCount, images[4], available, featured, createdAt, createdBy, updatedAt, deletedAt?, deletedBy?, outOfStock, inventory }
-```
-Stored in `data/products.json`, loaded via `lib/products.ts` (client) and `products.server.ts` (`"use cache"`).
-
-## Getting started
+## Quick Start
 
 ```bash
 bun install
-bun run dev      # http://localhost:3000
-bun run build    # typecheck + turbopack
+bun run dev
 ```
 
-## Test Credentials
+Open [http://localhost:3000](http://localhost:3000).
 
-| Role | Email | Password | Access |
-|------|-------|----------|--------|
-| User | user@yolo.co | user123 | Browse, cart, checkout, order history |
-| Partner | partner@yolo.co | partner123 | Partner dashboard, product management |
-| Admin | admin@yolo.co | admin123 | Full admin access |
+## Quality Gates
 
-## Authentication
+Run the same checks used by CI before opening a pull request:
 
-Mock auth via Zustand + localStorage. Pages:
-- `/login` — Email + password, GSAP staggered entrance, sonner toasts
-- `/signup` — Name + email + password + confirm, terms checkbox
-- `/partner` — 3-step wizard (business info → description → confirm)
+```bash
+bun run check:catalog
+bun run lint
+bun run build
+```
 
-All auth pages feature: GSAP entrance animations, motion/react micro-interactions on buttons (whileHover/whileTap), prefers-reduced-motion fallbacks.
+The [CI workflow](.github/workflows/ci.yml) runs on every push and pull request. The catalog check rejects any product that is not in the `Electronics` category. The build generates the production routes and validates the Vercel-compatible Next.js output.
 
-## Checkout
+## Vercel Deployment
 
-`app/checkout/page.tsx` — animated inputs (`AnimatedInput`), `zod` validation, methods: **Visa** (card), **Orange Money**, **MTN MoMo**, **Cash on Delivery**, shipping (Yaoundé/Cameroun/CEMAC), promo, FCFA total, WhatsApp fallback, page transition, skeletons per step.
+No custom server is required.
 
-## Promo / Discounts
+1. Import `menoc61/animatedlayout` into Vercel.
+2. Keep the framework preset as Next.js.
+3. Set the package manager to Bun when prompted.
+4. Use `bun run build` as the build command.
+5. Deploy the project.
 
-Codes: `YOLO10` 10%, `KENNEDY20` 20% ≥80k FCFA, `WHATSAPP5` 5% — see `lib/promo.ts` + `applyPromo`.
+The current demo uses no required environment variables. Add secrets only through Vercel project settings and never commit them.
 
-## Brand
+### CLI Deployment
 
-**YOLO — Avenue Kennedy, Yaoundé, Cameroun · yolo.co · hello@yolo.co · WhatsApp +237 699 00 00 00** · FCFA · #1 enterprise city store.
+Install and authenticate the Vercel CLI once:
+
+```bash
+bunx vercel login
+bunx vercel link
+```
+
+Then use the guarded deployment scripts:
+
+```bash
+bun run deploy:preview
+bun run deploy:vercel
+```
+
+Both commands validate the electronics-only catalog and complete a production build before deployment. `deploy:preview` creates a preview deployment; `deploy:vercel` deploys to production. The Vercel CLI reads its authentication from your local session, so no token belongs in the repository.
+
+## Repository Map
+
+```text
+app/                   Routes, layouts, metadata, manifest, sitemap, robots
+components/            Storefront, UI, checkout, auth, and SEO components
+context/               Locale and translation context
+data/products.json     Electronics catalog source of truth
+hooks/                 Product, recommendation, motion, and reduced-motion hooks
+lib/                   Catalog access, currency, promotions, and shared types
+public/                Logos, generated icons, OG image, service worker, offline page
+scripts/               Icon generation and catalog validation
+stores/                Cart, wishlist, auth, and order state
+.github/workflows/      Push and pull-request CI
+```
+
+## Catalog Contract
+
+Product data lives in `data/products.json` and is exposed through `lib/products.ts`. Every product must:
+
+- Use the `Electronics` category.
+- Include four valid product image URLs.
+- Include price, inventory, availability, rating, review count, and audit timestamps.
+- Use the shared FCFA helpers for displayed prices.
+
+Do not add apparel, footwear, beauty, decor, or other non-electronic categories.
+
+## Collaboration
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before making changes. Collaboration is invitation-only. Keep commits focused, document user-facing changes, include screenshots for visual work, and wait for CI before merging.
+
+## Ownership and License
+
+YOLO retains exclusive ownership of the application ecosystem and all associated source, product, design, brand, data, documentation, configuration, and deployment materials. This repository is closed source and proprietary. See [LICENSE](LICENSE).
+
+## Contact
+
+YOLO, Avenue Kennedy, Yaounde, Cameroon<br />
+hello@yolo.co<br />
+WhatsApp: +7 901 180 53 50

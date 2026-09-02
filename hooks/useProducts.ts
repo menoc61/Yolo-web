@@ -1,23 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
-import { getProducts, getFeaturedProducts, getProductBySlug, searchProducts, getCategories } from "@/lib/products";
+import {
+  getProducts,
+  getFeaturedProducts,
+  getProductBySlug,
+  searchProducts,
+  getCategories,
+} from "@/lib/products";
+import {
+  productsKey,
+  featuredProductsKey,
+  categoriesKey,
+  productKey,
+  searchProductsKey,
+} from "@/lib/queryKeys";
 
 export function useProducts() {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: productsKey,
     queryFn: getProducts,
   });
 }
 
 export function useFeaturedProducts() {
   return useQuery({
-    queryKey: ["products", "featured"],
+    queryKey: featuredProductsKey,
     queryFn: getFeaturedProducts,
   });
 }
 
 export function useProduct(slug: string) {
   return useQuery({
-    queryKey: ["product", slug],
+    queryKey: productKey(slug),
     queryFn: () => getProductBySlug(slug),
     enabled: !!slug,
   });
@@ -25,14 +38,14 @@ export function useProduct(slug: string) {
 
 export function useCategories() {
   return useQuery({
-    queryKey: ["categories"],
+    queryKey: categoriesKey,
     queryFn: getCategories,
   });
 }
 
 export function useSearchProducts(query: string, category?: string) {
   return useQuery({
-    queryKey: ["products", "search", query, category],
+    queryKey: searchProductsKey(query, category),
     queryFn: () => searchProducts(query, category),
     enabled: !!(query || category),
   });

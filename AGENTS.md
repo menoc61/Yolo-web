@@ -1,13 +1,19 @@
 <!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know — Next 16 breaking changes. Read node_modules/next/dist/docs/ before coding.
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
 <!-- END:nextjs-agent-rules -->
 
 # YOLO — Agents Guide (scalable, maintainable, enterprise)
 
 ## Contract: yolo.co · Avenue Kennedy, Yaoundé, Cameroun · FCFA
 
-- **Domain:** `https://yolo.co` (`metadataBase`). All canonical/OG use it.
-- **Store:** Avenue Kennedy, Yaoundé, Centre, Cameroun. Footer/header/contact use it. WhatsApp `+237 699 00 00 00`, `hello@yolo.co`.
+- **Domain:** `https://yolo-cm.vercel.app` (`metadataBase`). All canonical/OG use it.
+- **Store:** Avenue Kennedy, Yaoundé, Centre, Cameroun. Footer/header/contact use it. WhatsApp `+7 901 180 53 50`, `hello@yolo.co`.
 - **Currency:** **FCFA (XAF)** everywhere via `lib/currency.ts` `formatFCFA`/`formatPrice` (USD×620). Never `$`. Add new price via those helpers.
 - **City:** enterprise rating/feedback, outOfStock, inventory, createdAt/By, deletedAt/By on `Product` (`lib/types.ts`, `data/products.json`).
 
@@ -46,7 +52,7 @@
 
 - Regenerate brand assets with `bun run icons` (`scripts/generate-icons.ts`, zero-dependency PNG encoder). Outputs `public/icons/icon-192.png`, `icon-512.png`, `icon-512-maskable.png`, and `public/og.png` (1200×630 social card).
 - Manifest: `app/manifest.ts` (auto-served at `/manifest.webmanifest`). Metadata in `app/layout.tsx` references `/og.png`, `/icons/icon-192.png` (OG + apple touch).
-- Additives: `public/sw.js` (network-first navigation → offline fallback), `public/offline.html`, `components/PwaInstall.tsx` (SW register + beforeinstallprompt). WhatsApp links appear inline (footer, contact, checkout) via `wa.me/237699000000`.
+- Additives: `public/sw.js` (network-first navigation → offline fallback), `public/offline.html`, `components/PwaInstall.tsx` (SW register + beforeinstallprompt). WhatsApp links appear inline (footer, contact, checkout) via `wa.me/+79011805350`.
 
 ## Checklist before PR
 

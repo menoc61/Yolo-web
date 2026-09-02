@@ -65,7 +65,7 @@ export function ProductActions({ product }: Props) {
   };
 
   const handleShare = async () => {
-    const url = `https://yolo.co/products/${product.slug}`;
+    const url = `https://yolo-cm.vercel.app/products/${product.slug}`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -140,7 +140,7 @@ export function ProductActions({ product }: Props) {
         </motion.button>
       </div>
 
-      <a href={`https://wa.me/237699000000?text=Bonjour YOLO — je veux ${encodeURIComponent(product.name)} (${formatPrice(product.price)} FCFA)`} target="_blank" style={{ fontSize: "0.7rem", textAlign: "center", color: "#25D366", textDecoration: "none", letterSpacing: "0.06em" }}>Commander via WhatsApp · Avenue Kennedy →</a>
+      <a href={`https://wa.me/+79011805350?text=Bonjour YOLO — je veux ${encodeURIComponent(product.name)} (${formatPrice(product.price)} FCFA)`} target="_blank" style={{ fontSize: "0.7rem", textAlign: "center", color: "#25D366", textDecoration: "none", letterSpacing: "0.06em" }}>Commander via WhatsApp · Avenue Kennedy →</a>
     </div>
   );
 }

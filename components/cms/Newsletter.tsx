@@ -35,7 +35,7 @@ export function Newsletter() {
         </form>
       </div>
       <div className="container" style={{ marginTop: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
-        <a href="https://wa.me/237699000000?text=Je%20veux%20rejoindre%20le%20groupe%20YOLO%20WhatsApp%20Avenue%20Kennedy" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "10px 16px", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", display: "inline-flex", gap: 8, alignItems: "center" }}>
+        <a href="https://wa.me/+79011805350?text=Je%20veux%20rejoindre%20le%20groupe%20YOLO%20WhatsApp%20Avenue%20Kennedy" target="_blank" style={{ background: "#25D366", color: "#0b0b0b", padding: "10px 16px", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", display: "inline-flex", gap: 8, alignItems: "center" }}>
           <span style={{ width: 8, height: 8, background: "#0b0b0b", borderRadius: "50%" }} /> Rejoindre WhatsApp
         </a>
         <span style={{ fontSize: "0.65rem", color: "#333", alignSelf: "center" }}>Avenue Kennedy, Yaoundé · Mobile app bientôt · yolo.co</span>

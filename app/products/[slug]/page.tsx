@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: Props) {
   return {
     title: `${product.name} — YOLO | ${product.category} · ${formatPrice(product.price)} FCFA`,
     description: `${product.description} — ${product.rating ?? 4.8}★ (${product.reviewCount ?? 0} avis) · ${formatPrice(product.price)} FCFA · Avenue Kennedy, Yaoundé · yolo.co`,
-    alternates: { canonical: `https://yolo.co/products/${slug}` },
+    alternates: { canonical: `https://yolo-cm.vercel.app/products/${slug}` },
     openGraph: {
       title: `${product.name} — YOLO | ${product.category} · ${formatPrice(product.price)} FCFA`,
       description: `${product.description} — ${product.rating ?? 4.8}★ (${product.reviewCount ?? 0} avis) · ${formatPrice(product.price)} FCFA`,
-      url: `https://yolo.co/products/${slug}`,
+      url: `https://yolo-cm.vercel.app/products/${slug}`,
       siteName: "YOLO",
       locale: "fr_CM",
       type: "website",
