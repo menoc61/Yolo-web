@@ -1,0 +1,83 @@
+{
+  "info": {
+    "name": "YOLO API (Mock)",
+    "description": "Mock API collection for YOLO e-commerce. Auth is frontend-only (Zustand + localStorage). Use test credentials below. Import in Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login — User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"user@yolo.co\",\n  \"password\": \"user123\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { const j = pm.response.json(); pm.collectionVariables.set('token', j.token); }"] } }]
+        },
+        {
+          "name": "Login — Partner",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"partner@yolo.co\",\n  \"password\": \"partner123\"\n}" }
+          }
+        },
+        {
+          "name": "Login — Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@yolo.co\",\n  \"password\": \"admin123\"\n}" }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"new@yolo.co\",\n  \"password\": \"pass123\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        { "name": "List Products", "request": { "method": "GET", "url": "{{baseUrl}}/api/products" } },
+        { "name": "Get Product by Slug", "request": { "method": "GET", "url": "{{baseUrl}}/api/products/:slug", "variable": [{ "key": "slug", "value": "REPLACE_WITH_SLUG" }] } },
+        { "name": "Search Products", "request": { "method": "GET", "url": "{{baseUrl}}/api/products?q=headphones&category=Electronics" } },
+        { "name": "Get Categories", "request": { "method": "GET", "url": "{{baseUrl}}/api/categories" } }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        { "name": "Get Cart", "request": { "method": "GET", "url": "{{baseUrl}}/api/cart" } },
+        { "name": "Add to Cart", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/cart/add", "body": { "mode": "raw", "raw": "{\n  \"productId\": \"REPLACE\",\n  \"quantity\": 1\n}" } } }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        { "name": "Place Order", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/orders", "body": { "mode": "raw", "raw": "{\n  \"items\": [],\n  \"payment\": \"om\",\n  \"shipping\": \"yde\",\n  \"address\": \"Avenue Kennedy, Yaoundé\"\n}" } } }
+      ]
+    },
+    {
+      "name": "Partner",
+      "item": [
+        { "name": "Apply as Partner", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}" }], "url": "{{baseUrl}}/api/partner/apply", "body": { "mode": "raw", "raw": "{\n  \"businessName\": \"Tech Store Yaoundé\",\n  \"contactName\": \"Jean Dupont\",\n  \"phone\": \"+237699000000\",\n  \"city\": \"Yaoundé\",\n  \"businessType\": \"Electronics\",\n  \"message\": \"We sell premium electronics.\"\n}" } } }
+      ]
+    }
+  ]
+}

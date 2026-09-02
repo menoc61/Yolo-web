@@ -1,70 +1,104 @@
-# Getting Started with Create React App
-To see the site visit https://animatedlayout-mbxfllp1y-menoc61.vercel.app
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# YOLO — yolo.co · Avenue Kennedy, Yaoundé
 
-## Available Scripts
+Enterprise e-commerce for Cameroun — prices in **FCFA**, hosted on **yolo.co**, flagship store **Avenue Kennedy, Yaoundé**. Mobile-first, 60fps, accessible, SEO-perfect. Built for scale.
 
-In the project directory, you can run:
+## Stack
 
-### `npm start`
+| Layer | Tech | Why |
+|-------|------|-----|
+| Framework | Next.js 16 App Router, Turbopack, `use cache` | RSC, streaming, `cacheComponents` ready |
+| UI | React 19, TypeScript strict, `motion` (framer) + GSAP 3 + ScrollTrigger + Lenis | GPU-only `transform`/`opacity`, `@starting-style` fallbacks |
+| State | Zustand `yolo-cart` (persist, versioned) + TanStack Query 5 (dedup, `useCache` server) | Vercel best-practice: parallel fetch, `Promise.all`, no waterfalls |
+| Styling | CSS BEM + Tailwind 4 (`tw-animate-css`), design tokens (`--ease-out`) | Scalable, no CSS-in-JS runtime |
+| Data | `data/products.json` external + `lib/products.ts` / `lib/products.server.ts` | Dummy data isolated, `use cache` server |
+| Payments | Visa, Orange Money, MTN MoMo, Cash on Delivery + promo codes | FCFA throughout |
+| Hosting | yolo.co, `metadataBase` `https://yolo.co`, OG `fr_CM`, `y+` |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Architecture — scalable, maintainable
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+web/
+├─ app/                 // RSC pages, generateStaticParams, use cache, page transitions
+│  ├─ (marketing)/page.tsx  // Hero, Featured, GSAP batch reveal
+│  ├─ products/[slug]/  // AnimatedCarousel 4 images, Rating, FCFA
+│  ├─ products/page.tsx // Filters + pagination + AnimatePresence, Skeleton
+│  ├─ contact/page.tsx  // Animated inputs, validation
+│  ├─ checkout/page.tsx // Visa/OM/MoMo/COD + shipping
+│  └─ layout.tsx        // fonts (Josefin), Query+ I18n, SiteHeader, PageTransition, Newsletter, SiteFooter, viewport
+├─ components/
+│  ├─ ui/AnimatedCarousel.tsx // motion, blur placeholder, progress, drag, reduced-motion, avif/webp
+│  ├─ ui/Skeleton.tsx, ui/AnimatedInput.tsx
+│  ├─ cms/PageTransition.tsx, cms/Newsletter.tsx (WhatsApp)
+│  ├─ product/ProductRating.tsx, ProductGrid.tsx
+│  ├─ cart/CartDrawer.tsx  // FCFA, promo, spinner micro-interaction
+│  └─ cms/ContactForm.tsx // micro-interaction validated
+├─ data/products.json   // external dummy data (12 products, 4 images, rating, discount, audit)
+├─ lib/
+│  ├─ types.ts         // Product { rating, reviewCount, discountPercent, createdAt, createdBy, deletedAt, deletedBy, outOfStock, inventory }
+│  ├─ currency.ts      // formatFCFA (fr-CM), formatPrice USD→FCFA 620
+│  ├─ promo.ts         // YOLO10, KENNEDY20, WHATSAPP5
+│  └─ products{,.server}.ts // client + "use cache" server
+├─ hooks/useAnimations.ts // gsap context, ScrollTrigger batch, 60fps
+└─ stores/cart.ts       // persist, itemCount/subtotal
+```
 
-### `npm test`
+**Principles:**
+- **Mobile-first**: `viewport` `device-width`, `640/1024` breakpoints, `dvh`, touch `44px` targets, hover gated `(@media hover:hover)`, `useReducedMotion` everywhere.
+- **Performance**: `next/image` `fill`+`sizes`+`blurDataURL`+`fetchPriority high` for LCP, `formats avif/webp`, `minimumCacheTTL 30d`, `content-visibility` on grids, `Promise.all` parallel, `React.cache` dedup, `motion` layout springs `500/40`.
+- **SEO**: `metadata` + `viewport` + `openGraph fr_CM` + `canonical yolo.co` + `generateStaticParams` + JSON-LD (Product) planned.
+- **A11y**: `prefers-reduced-motion` fallbacks, `focus-visible:ring`, `aria-*`, keyboard Nav (Esc, arrows).
+- **Maintainability**: One source `data/` , typed `Product`, `formatFCFA` single, `promo` single, `AGENTS.md` rules, `README` as contract.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Animations — iart-ai/web-animation-skills + micro-interaction + 60fps
 
-### `npm run build`
+All skills installed: `animate`, `gsap-core/scrolltrigger/timeline/react/performance`, `iart-ai` 60fps, micro-interaction, page-transition, accessible, gsap-web.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Micro**: buttons `whileTap scale 0.96` spring `400/30`, `whileHover 1.03`, inputs focus `boxShadow 0 0 0 3px`, toast `AnimatePresence mode=popLayout`, `duration 100–250ms`, `ease [0.16,1,0.3,1]` / `var(--ease-out)`.
+- **Page transition**: `PageTransition` GSAP `fromTo opacity 0→1 y 8→0 0.45s power3.out` on `pathname` change, `will-change-transform`.
+- **Carousel**: transform/opacity only, stagger `0.06`, drag `0.14`, progress `scaleX linear`.
+- **Background micro**: `Newsletter` shimmer, `Hero` Lenis smooth, `pulse-dot` 2s.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Data model — audit + stock
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+`Product` now:
+```ts
+{ id, slug, name, category, price, originalPrice?, discountPercent?, rating, reviewCount, images[4], available, featured, createdAt, createdBy, updatedAt, deletedAt?, deletedBy?, outOfStock, inventory }
+```
+Stored in `data/products.json`, loaded via `lib/products.ts` (client) and `products.server.ts` (`"use cache"`).
 
-### `npm run eject`
+## Getting started
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+bun install
+bun run dev      # http://localhost:3000
+bun run build    # typecheck + turbopack
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Test Credentials
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Role | Email | Password | Access |
+|------|-------|----------|--------|
+| User | user@yolo.co | user123 | Browse, cart, checkout, order history |
+| Partner | partner@yolo.co | partner123 | Partner dashboard, product management |
+| Admin | admin@yolo.co | admin123 | Full admin access |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Authentication
 
-## Learn More
+Mock auth via Zustand + localStorage. Pages:
+- `/login` — Email + password, GSAP staggered entrance, sonner toasts
+- `/signup` — Name + email + password + confirm, terms checkbox
+- `/partner` — 3-step wizard (business info → description → confirm)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+All auth pages feature: GSAP entrance animations, motion/react micro-interactions on buttons (whileHover/whileTap), prefers-reduced-motion fallbacks.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Checkout
 
-### Code Splitting
+`app/checkout/page.tsx` — animated inputs (`AnimatedInput`), `zod` validation, methods: **Visa** (card), **Orange Money**, **MTN MoMo**, **Cash on Delivery**, shipping (Yaoundé/Cameroun/CEMAC), promo, FCFA total, WhatsApp fallback, page transition, skeletons per step.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Promo / Discounts
 
-### Analyzing the Bundle Size
+Codes: `YOLO10` 10%, `KENNEDY20` 20% ≥80k FCFA, `WHATSAPP5` 5% — see `lib/promo.ts` + `applyPromo`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Brand
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**YOLO — Avenue Kennedy, Yaoundé, Cameroun · yolo.co · hello@yolo.co · WhatsApp +237 699 00 00 00** · FCFA · #1 enterprise city store.
